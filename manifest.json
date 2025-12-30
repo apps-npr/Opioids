@@ -1,0 +1,8 @@
+{
+  "name": "Opioid Management",
+  "short_name": "OpioidApp",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#c7d2fe"
+}

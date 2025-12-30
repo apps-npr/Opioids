@@ -1,0 +1,7 @@
+
+body{font-family:system-ui;background:#f6f7fb;margin:0}
+.container{max-width:900px;margin:auto;padding:16px}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px}
+input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ccc}
+button{background:#c7d2fe;border:none;font-size:16px}
+small{color:#555}

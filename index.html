@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opioid Management PWA</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="container">
+<h1>Opioid Management / การปรับยา Opioids</h1>
+
+<section class="card">
+<h2>1. Dose Initiation / Adjustment</h2>
+<label>Pain score</label>
+<select id="pain">
+  <option value="moderate">Moderate (4–6)</option>
+  <option value="severe">Severe (7–10)</option>
+</select>
+
+<label>Current Morphine dose (mg/day)</label>
+<input id="currentDose" type="number" value="0">
+
+<label>Breakthrough doses used / 24 hr</label>
+<input id="btCount" type="number" value="0">
+
+<label>Renal impairment</label>
+<select id="renal">
+  <option value="no">No</option>
+  <option value="yes">Yes</option>
+</select>
+
+<button onclick="calculateDose()">Calculate</button>
+<div id="doseResult"></div>
+</section>
+
+<section class="card">
+<h2>2. Sedation score & Naloxone</h2>
+<label>Sedation score</label>
+<select id="sed">
+  <option value="0">0 – Alert</option>
+  <option value="1">1 – Occasionally drowsy</option>
+  <option value="2">2 – Asleep, easy to arouse</option>
+  <option value="3">3 – Difficult to arouse</option>
+</select>
+
+<label>Respiratory rate</label>
+<input id="rr" type="number">
+
+<button onclick="checkSedation()">Assess</button>
+<div id="sedResult"></div>
+</section>
+
+<section class="card">
+<h2>3. Opioid Conversion</h2>
+<label>Dose</label>
+<input id="inputDose" type="number">
+
+<label>Drug</label>
+<select id="inputDrug">
+  <option value="morphine">Morphine PO</option>
+  <option value="oxycodone">Oxycodone PO</option>
+  <option value="tramadol">Tramadol PO</option>
+  <option value="fentanyl">Fentanyl patch (mcg/hr)</option>
+  <option value="methadone">Methadone PO</option>
+</select>
+
+<button onclick="convertOpioid()">Convert</button>
+<div id="convertResult"></div>
+</section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
