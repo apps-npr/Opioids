@@ -1,77 +1,103 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Opioid Management PWA</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opioid Pal: Palliative Care</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="theme-color" content="#FFdfd3">
 </head>
 <body>
-<div class="container">
-<h1>Opioid Management / การปรับยา Opioids</h1>
 
-<section class="card">
-<h2>1. Dose Initiation / Adjustment</h2>
-<label>Pain score</label>
-<select id="pain">
-  <option value="moderate">Moderate (4–6)</option>
-  <option value="severe">Severe (7–10)</option>
-</select>
+    <div class="app-container">
+        <header>
+            <h1>💊 Opioid Pal</h1>
+            <p>ผู้ช่วยคำนวณและปรับยาแก้ปวด</p>
+        </header>
 
-<label>Current Morphine dose (mg/day)</label>
-<input id="currentDose" type="number" value="0">
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="openTab('conversion')">🔄 แปลงยา (Conversion)</button>
+            <button class="tab-btn" onclick="openTab('management')">📋 ปรับยา (Management)</button>
+        </nav>
 
-<label>Breakthrough doses used / 24 hr</label>
-<input id="btCount" type="number" value="0">
+        <section id="conversion" class="tab-content active">
+            <div class="card input-card">
+                <h3>ตั้งต้นด้วยยาที่ผู้ป่วยใช้อยู่</h3>
+                <div class="form-group">
+                    <label>เลือกตัวยา:</label>
+                    <select id="sourceDrug">
+                        <option value="tramadol">Tramadol (mg/day)</option>
+                        <option value="codeine">Codeine (mg/day)</option>
+                        <option value="morphine_po">Morphine Oral (mg/day)</option>
+                        <option value="morphine_iv">Morphine IV/SC (mg/day)</option>
+                        <option value="fentanyl">Fentanyl Patch (mcg/hr)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ปริมาณรวมต่อวัน (Total Daily Dose):</label>
+                    <input type="number" id="sourceDose" placeholder="ระบุตัวเลข (เช่น 60)" oninput="calculateConversion()">
+                </div>
+            </div>
 
-<label>Renal impairment</label>
-<select id="renal">
-  <option value="no">No</option>
-  <option value="yes">Yes</option>
-</select>
+            <div class="card result-card" id="conversionResult" style="display:none;">
+                <h3>📊 ตารางเทียบเท่า (Equianalgesic Doses)</h3>
+                <table class="pastel-table">
+                    <thead>
+                        <tr>
+                            <th>ตัวยา</th>
+                            <th>ขนาดแนะนำ</th>
+                            <th>หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="conversionTableBody">
+                        </tbody>
+                </table>
+                <div class="alert-box">
+                    <small>*คำเตือน: Opioid conversion เป็นค่าประมาณการ ควรเริ่มลด dose ลง 25-50% เพื่อความปลอดภัย (Incomplete cross-tolerance)</small>
+                </div>
+            </div>
+        </section>
 
-<button onclick="calculateDose()">Calculate</button>
-<div id="doseResult"></div>
-</section>
+        <section id="management" class="tab-content">
+            <div class="card input-card">
+                <h3>ประเมินผู้ป่วย</h3>
+                <div class="form-group">
+                    <label>ระดับความปวด (Pain Score 0-10):</label>
+                    <input type="range" id="painScore" min="0" max="10" value="5" oninput="updateRangeVal(this.value)">
+                    <span id="painScoreVal" class="badge">5 - Moderate</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>ประวัติการใช้ยา Opioids:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="naive" name="history" value="naive" checked>
+                        <label for="naive">ไม่เคยใช้ (Naive)</label>
+                        
+                        <input type="radio" id="user" name="history" value="user">
+                        <label for="user">ใช้อยู่เดิม (On Opioids)</label>
+                    </div>
+                </div>
 
-<section class="card">
-<h2>2. Sedation score & Naloxone</h2>
-<label>Sedation score</label>
-<select id="sed">
-  <option value="0">0 – Alert</option>
-  <option value="1">1 – Occasionally drowsy</option>
-  <option value="2">2 – Asleep, easy to arouse</option>
-  <option value="3">3 – Difficult to arouse</option>
-</select>
+                <div id="currentOpioidSection" class="form-group" style="display:none;">
+                    <label>ขนาดยาเดิม (Oral Morphine Eq):</label>
+                    <input type="number" id="currentDose" placeholder="mg/day">
+                </div>
 
-<label>Respiratory rate</label>
-<input id="rr" type="number">
+                <button class="btn-primary" onclick="generatePlan()">แนะนำการรักษา</button>
+            </div>
 
-<button onclick="checkSedation()">Assess</button>
-<div id="sedResult"></div>
-</section>
+            <div id="planResult" class="card result-card" style="display:none;">
+                </div>
+        </section>
 
-<section class="card">
-<h2>3. Opioid Conversion</h2>
-<label>Dose</label>
-<input id="inputDose" type="number">
+        <footer>
+            <p>Reference: Palliative Care Guidelines (Based on provided images)</p>
+        </footer>
+    </div>
 
-<label>Drug</label>
-<select id="inputDrug">
-  <option value="morphine">Morphine PO</option>
-  <option value="oxycodone">Oxycodone PO</option>
-  <option value="tramadol">Tramadol PO</option>
-  <option value="fentanyl">Fentanyl patch (mcg/hr)</option>
-  <option value="methadone">Methadone PO</option>
-</select>
-
-<button onclick="convertOpioid()">Convert</button>
-<div id="convertResult"></div>
-</section>
-</div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
